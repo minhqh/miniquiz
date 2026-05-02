@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 from google import genai
+import json
 
 load_dotenv()
 
@@ -36,6 +37,12 @@ def generate_mcq(req: Request):
             contents=prompt
         )
 
-        return {"result": response.text}
+        response_text = response.text
+        try:
+            parsed = json.loads(response_text)
+            return parsed
+        except:
+            return {"raw": response_text}
+            
     except Exception as e:
         return {"error": str(e)}
